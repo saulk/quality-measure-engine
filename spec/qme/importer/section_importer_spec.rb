@@ -1,7 +1,7 @@
-describe QME::Importer::SectionImporter do
+describe QME::Importer::SectionImporterC32 do
 
   before do
-    @si = QME::Importer::SectionImporter.new('/cda:simple/cda:entry', "./cda:code", "./cda:status")
+    @si = QME::Importer::SectionImporterC32.new('/cda:simple/cda:entry', "./cda:code", "./cda:status")
     @doc = Nokogiri::XML(File.new('fixtures/section_importer.xml'))
     @doc.root.add_namespace_definition('cda', 'urn:hl7-org:v3')
   end

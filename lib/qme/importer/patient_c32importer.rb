@@ -5,12 +5,12 @@ module QME
     # into the processed form we store in MongoDB. The class does this by running each measure
     # independently on the XML document
     #
-    # This class is a Singleton. It should be accessed by calling PatientImporter.instance
-    class PatientImporter
+    # This class is a Singleton. It should be accessed by calling PatientImporterC32.instance
+    class PatientImporterC32
 
       include Singleton
 
-      # Creates a new PatientImporter with the following XPath expressions used to find content in 
+      # Creates a new PatientImporterC32 with the following XPath expressions used to find content in 
       # a HITSP C32:
       #
       # Encounter entries
@@ -54,25 +54,25 @@ module QME
         @measure_importers = {}
         @section_importers = {}
         @id_map = {}
-        @section_importers[:encounters] = SectionImporter.new("//cda:section[cda:templateId/@root='2.16.840.1.113883.3.88.11.83.127']/cda:entry/cda:encounter")
-        @section_importers[:procedures] = SectionImporter.new("//cda:procedure[cda:templateId/@root='2.16.840.1.113883.10.20.1.29']")
-        @section_importers[:results] = SectionImporter.new("//cda:observation[cda:templateId/@root='2.16.840.1.113883.3.88.11.83.15.1'] | //cda:observation[cda:templateId/@root='2.16.840.1.113883.3.88.11.83.15']")
-        @section_importers[:vital_signs] = SectionImporter.new("//cda:observation[cda:templateId/@root='2.16.840.1.113883.3.88.11.83.14']")
-        @section_importers[:medications] = SectionImporter.new("//cda:section[cda:templateId/@root='2.16.840.1.113883.3.88.11.83.112']/cda:entry/cda:substanceAdministration",
+        @section_importers[:encounters] = SectionImporterC32.new("//cda:section[cda:templateId/@root='2.16.840.1.113883.3.88.11.83.127']/cda:entry/cda:encounter")
+        @section_importers[:procedures] = SectionImporterC32.new("//cda:procedure[cda:templateId/@root='2.16.840.1.113883.10.20.1.29']")
+        @section_importers[:results] = SectionImporterC32.new("//cda:observation[cda:templateId/@root='2.16.840.1.113883.3.88.11.83.15.1'] | //cda:observation[cda:templateId/@root='2.16.840.1.113883.3.88.11.83.15']")
+        @section_importers[:vital_signs] = SectionImporterC32.new("//cda:observation[cda:templateId/@root='2.16.840.1.113883.3.88.11.83.14']")
+        @section_importers[:medications] = SectionImporterC32.new("//cda:section[cda:templateId/@root='2.16.840.1.113883.3.88.11.83.112']/cda:entry/cda:substanceAdministration",
         "./cda:consumable/cda:manufacturedProduct/cda:manufacturedMaterial/cda:code",
         nil,
         "./cda:consumable/cda:manufacturedProduct/cda:manufacturedMaterial/cda:code/cda:originalText/cda:reference[@value]")
-        @section_importers[:conditions] = SectionImporter.new("//cda:section[cda:templateId/@root='2.16.840.1.113883.3.88.11.83.103']/cda:entry/cda:act/cda:entryRelationship/cda:observation",
+        @section_importers[:conditions] = SectionImporterC32.new("//cda:section[cda:templateId/@root='2.16.840.1.113883.3.88.11.83.103']/cda:entry/cda:act/cda:entryRelationship/cda:observation",
         "./cda:value",
         "./cda:entryRelationship/cda:observation[cda:templateId/@root='2.16.840.1.113883.10.20.1.50']/cda:value",
         "./cda:text/cda:reference[@value]")
-        @section_importers[:social_history] = SectionImporter.new("//cda:observation[cda:templateId/@root='2.16.840.1.113883.3.88.11.83.19']")
-        @section_importers[:care_goals] = SectionImporter.new("//cda:observation[cda:templateId/@root='2.16.840.1.113883.10.20.1.25']")
-        @section_importers[:medical_equipment] = SectionImporter.new("//cda:section[cda:templateId/@root='2.16.840.1.113883.3.88.11.83.128']/cda:entry/cda:supply",
+        @section_importers[:social_history] = SectionImporterC32.new("//cda:observation[cda:templateId/@root='2.16.840.1.113883.3.88.11.83.19']")
+        @section_importers[:care_goals] = SectionImporterC32.new("//cda:observation[cda:templateId/@root='2.16.840.1.113883.10.20.1.25']")
+        @section_importers[:medical_equipment] = SectionImporterC32.new("//cda:section[cda:templateId/@root='2.16.840.1.113883.3.88.11.83.128']/cda:entry/cda:supply",
         "./cda:participant/cda:participantRole/cda:playingDevice/cda:code")
-        @section_importers[:allergies] = SectionImporter.new("//cda:observation[cda:templateId/@root='2.16.840.1.113883.10.20.1.18']",
+        @section_importers[:allergies] = SectionImporterC32.new("//cda:observation[cda:templateId/@root='2.16.840.1.113883.10.20.1.18']",
         "./cda:participant/cda:participantRole/cda:playingEntity/cda:code")
-        @section_importers[:immunizations] = SectionImporter.new("//cda:section[cda:templateId/@root='2.16.840.1.113883.3.88.11.83.117']/cda:entry/cda:substanceAdministration",
+        @section_importers[:immunizations] = SectionImporterC32.new("//cda:section[cda:templateId/@root='2.16.840.1.113883.3.88.11.83.117']/cda:entry/cda:substanceAdministration",
         "./cda:consumable/cda:manufacturedProduct/cda:manufacturedMaterial/cda:code",
         nil,
         "./cda:consumable/cda:manufacturedProduct/cda:manufacturedMaterial/cda:code/cda:originalText/cda:reference[@value]" )
@@ -102,9 +102,9 @@ module QME
       # @param [Nokogiri::XML::Document] doc It is expected that the root node of this document
       #        will have the "cda" namespace registered to "urn:hl7-org:v3"
       # @return [Hash] a representation of the patient that can be inserted into MongoDB
-      def parse_c32(doc)
+      def parse(doc)
         c32_patient = {}
-        entries = create_c32_hash(doc)
+        entries = create_hash(doc)
         get_demographics(c32_patient, doc)
         process_events(c32_patient, entries)
       end
@@ -189,7 +189,7 @@ module QME
       # @param [Nokogiri::XML::Document] doc It is expected that the root node of this document
       #        will have the "cda" namespace registered to "urn:hl7-org:v3"
       # @return [Hash] a represnetation of the patient with symbols as keys for each section
-      def create_c32_hash(doc, check_usable_entries = true)
+      def create_hash(doc, check_usable_entries = true)
         c32_patient = {}
         id_map = build_id_map(doc)
         @section_importers.each_pair do |section, importer|

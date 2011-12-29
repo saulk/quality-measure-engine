@@ -2,7 +2,7 @@ module QME
   module Importer
     # Class that can be used to create an importer for a section of a HITSP C32 document. It usually
     # operates by selecting all CDA entries in a section and then creates entries for them.
-    class SectionImporter
+    class SectionImporterC32
       attr_accessor :check_for_usable
       # Creates a new SectionImporter
       # @param [Hash] id_map A hash of all ID tags to values for the enclosing document.  Used to look up descriptions.

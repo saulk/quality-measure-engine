@@ -28,8 +28,8 @@ module QME
         @definition['measure'].each_pair do |property, description|
           raise "No standard_category for #{property}" if !description['standard_category']
           matcher = PropertyMatcher.new(description)
-          enrty_filter = filter_for_property(description['standard_category'], description['qds_data_type'])
-          entry_list = enrty_filter.call(patient_hash)
+          entry_filter = filter_for_property(description['standard_category'], description['qds_data_type'])
+          entry_list = entry_filter.call(patient_hash)
           if ! entry_list.empty?
             matched_list = matcher.match(entry_list)
             measure_info[property] = matched_list if matched_list.length > 0

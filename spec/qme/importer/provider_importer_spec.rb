@@ -1,19 +1,19 @@
-describe QME::Importer::ProviderImporter do
+describe QME::Importer::ProviderImporterC32 do
   before do
     @doc = Nokogiri::XML(File.new("fixtures/c32_fragments/provider.xml"))
     @doc.root.add_namespace_definition('cda', 'urn:hl7-org:v3')
     @nist_doc = Nokogiri::XML(File.new("fixtures/c32_fragments/NISTExampleC32.xml"))
     @nist_doc.root.add_namespace_definition('cda', 'urn:hl7-org:v3')
-    @importer = QME::Importer::ProviderImporter.instance
+    @importer = QME::Importer::ProviderImporterC32.instance
   end
   
   it 'should validate npi values' do
-    QME::Importer::ProviderImporter::luhn_checksum('7992739871').should == '3'
-    QME::Importer::ProviderImporter::valid_npi?('1234567893').should == true
-    QME::Importer::ProviderImporter::valid_npi?('808401234567893').should == true
-    QME::Importer::ProviderImporter::valid_npi?('1').should == false
-    QME::Importer::ProviderImporter::valid_npi?('1010101010').should == false
-    QME::Importer::ProviderImporter::valid_npi?('abcdefghij').should == false
+    QME::Importer::ProviderImporterC32::luhn_checksum('7992739871').should == '3'
+    QME::Importer::ProviderImporterC32::valid_npi?('1234567893').should == true
+    QME::Importer::ProviderImporterC32::valid_npi?('808401234567893').should == true
+    QME::Importer::ProviderImporterC32::valid_npi?('1').should == false
+    QME::Importer::ProviderImporterC32::valid_npi?('1010101010').should == false
+    QME::Importer::ProviderImporterC32::valid_npi?('abcdefghij').should == false
   end
   
   it "should extract providers from document" do
